@@ -31,4 +31,6 @@
     <!-- Use the default resolution of the device as preview size
     This prevents setting preview sizes above the device's resolution -->
     <bool name="useDisplayResolutionAsPreviewSize">false</bool>
+    <!-- Allows setting video size before recording starts -->
+    <bool name="needsEarlyVideoSize">false</bool>
 </resources>
