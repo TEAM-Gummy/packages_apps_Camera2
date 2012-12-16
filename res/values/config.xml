@@ -33,4 +33,6 @@
     <bool name="useDisplayResolutionAsPreviewSize">false</bool>
     <!-- Allows setting video size before recording starts -->
     <bool name="needsEarlyVideoSize">false</bool>
+    <!-- Use ZSL mode for Qualcomm cameras -->
+    <bool name="enableZSL">false</bool>
 </resources>
