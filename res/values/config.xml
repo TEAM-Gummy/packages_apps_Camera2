@@ -33,6 +33,8 @@
     <bool name="useDisplayResolutionAsPreviewSize">false</bool>
     <!-- Allows setting video size before recording starts -->
     <bool name="needsEarlyVideoSize">false</bool>
+    <!-- Disable face detection on the front camera -->
+    <bool name="noFaceDetectOnFrontCamera">false</bool>
     <!-- Use ZSL mode for Qualcomm cameras -->
     <bool name="enableZSL">false</bool>
 </resources>
