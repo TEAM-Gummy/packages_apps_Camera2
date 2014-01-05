@@ -175,6 +175,7 @@ public class CameraActivity extends Activity
     private Menu mActionBarMenu;
     private ViewGroup mUndoDeletionBar;
     private boolean mIsUndoingDeletion = false;
+    private boolean mIsEditActivityInProgress = false;
 
     private Uri[] mNfcPushUris = new Uri[1];
 
@@ -335,6 +336,9 @@ public class CameraActivity extends Activity
                 @Override
                 public void onDataFullScreenChange(int dataID, boolean full) {
                     boolean isCameraID = isCameraPreview(dataID);
+                    if (full && isCameraID && CameraActivity.this.hasWindowFocus()){
+                        updateStorageSpaceAndHint();
+                    }
                     if (!isCameraID) {
                         if (!full) {
                             // Always show action bar in filmstrip mode
@@ -397,6 +401,16 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onDataFocusChanged(final int dataID, final boolean focused) {
+                    boolean isPreview = isCameraPreview(dataID);
+                    boolean isFullScreen = mFilmStripView.inFullScreen();
+                    if (isFullScreen && isPreview && CameraActivity.this.hasWindowFocus()){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateStorageSpaceAndHint();
+                            }
+                        });
+                    }
                     // Delay hiding action bar if there is any user interaction
                     if (mMainHandler.hasMessages(HIDE_ACTION_BAR)) {
                         mMainHandler.removeMessages(HIDE_ACTION_BAR);
@@ -1217,6 +1231,7 @@ public class CameraActivity extends Activity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQ_CODE_DONT_SWITCH_TO_PREVIEW) {
             mResetToPreviewOnResume = false;
+            mIsEditActivityInProgress = false;
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -1327,6 +1342,7 @@ public class CameraActivity extends Activity
     public void onBackPressed() {
         if (!mFilmStripView.inCameraFullscreen()) {
             mFilmStripView.getController().goToFirstItem();
+            mCurrentModule.resizeForPreviewAspectRatio();
         } else if (!mCurrentModule.onBackPressed()) {
             super.onBackPressed();
         }
@@ -1458,14 +1474,17 @@ public class CameraActivity extends Activity
      * Launches an ACTION_EDIT intent for the given local data item.
      */
     public void launchEditor(LocalData data) {
-        Intent intent = new Intent(Intent.ACTION_EDIT)
-                .setDataAndType(data.getContentUri(), data.getMimeType())
-                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        try {
-            startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
-        } catch (ActivityNotFoundException e) {
-            startActivityForResult(Intent.createChooser(intent, null),
-                    REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+        if (!mIsEditActivityInProgress) {
+            Intent intent = new Intent(Intent.ACTION_EDIT)
+                    .setDataAndType(data.getContentUri(), data.getMimeType())
+                    .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            try {
+                startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+            } catch (ActivityNotFoundException e) {
+                startActivityForResult(Intent.createChooser(intent, null),
+                        REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+            }
+            mIsEditActivityInProgress = true;
         }
     }
 

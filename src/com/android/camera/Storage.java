@@ -43,6 +43,7 @@ public class Storage {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
 
     public static final String DIRECTORY = DCIM + "/Camera";
+    public static final String RAW_DIRECTORY = DCIM + "/Camera/raw";
     public static final String JPEG_POSTFIX = ".jpg";
 
     // Match the code in MediaProvider.computeBucketValues().
@@ -63,14 +64,20 @@ public class Storage {
         }
     }
 
-    public static void writeFile(String path, byte[] jpeg, ExifInterface exif) {
-        if (exif != null) {
+    public static void writeFile(String path, byte[] jpeg, ExifInterface exif,
+            String mimeType) {
+        if (exif != null && (mimeType == null ||
+            mimeType.equalsIgnoreCase("jpeg"))) {
             try {
                 exif.writeExif(jpeg, path);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to write data", e);
             }
-        } else {
+        } else if (jpeg != null) {
+            if (!(mimeType.equalsIgnoreCase("jpeg") || mimeType == null)) {
+                 File dir = new File(RAW_DIRECTORY);
+                 dir.mkdirs();
+            }
             writeFile(path, jpeg);
         }
     }
@@ -91,22 +98,13 @@ public class Storage {
         }
     }
 
-    // Save the image and add it to the MediaStore.
-    public static Uri addImage(ContentResolver resolver, String title, long date,
-            Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
-            int height) {
-
-        return addImage(resolver, title, date, location, orientation, exif, jpeg, width, height,
-                LocalData.MIME_TYPE_JPEG);
-    }
-
     // Save the image with a given mimeType and add it the MediaStore.
     public static Uri addImage(ContentResolver resolver, String title, long date,
             Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
             int height, String mimeType) {
 
-        String path = generateFilepath(title);
-        writeFile(path, jpeg, exif);
+        String path = generateFilepath(title, mimeType);
+        writeFile(path, jpeg, exif, mimeType);
         return addImage(resolver, title, date, location, orientation,
                 jpeg.length, path, width, height, mimeType);
     }
@@ -115,12 +113,16 @@ public class Storage {
     public static ContentValues getContentValuesForData(String title,
             long date, Location location, int orientation, int jpegLength,
             String path, int width, int height, String mimeType) {
-
-        ContentValues values = new ContentValues(11);
+        // Insert into MediaStore.
+        ContentValues values = new ContentValues(9);
         values.put(ImageColumns.TITLE, title);
-        values.put(ImageColumns.DISPLAY_NAME, title + JPEG_POSTFIX);
+        if (mimeType.equalsIgnoreCase("jpeg") || mimeType == null) {
+            values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
+        } else {
+            values.put(ImageColumns.DISPLAY_NAME, title + ".raw");
+        }
         values.put(ImageColumns.DATE_TAKEN, date);
-        values.put(ImageColumns.MIME_TYPE, mimeType);
+        values.put(ImageColumns.MIME_TYPE, "image/jpeg");
         // Clockwise rotation in degrees. 0, 90, 180, or 270.
         values.put(ImageColumns.ORIENTATION, orientation);
         values.put(ImageColumns.DATA, path);
@@ -152,8 +154,8 @@ public class Storage {
     public static void updateImage(Uri imageUri, ContentResolver resolver, String title, long date,
             Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
             int height, String mimeType) {
-        String path = generateFilepath(title);
-        writeFile(path, jpeg, exif);
+        String path = generateFilepath(title, mimeType);
+        writeFile(path, jpeg, exif, mimeType);
         updateImage(imageUri, resolver, title, date, location, orientation, jpeg.length, path,
                 width, height, mimeType);
     }
@@ -190,8 +192,12 @@ public class Storage {
         }
     }
 
-    public static String generateFilepath(String title) {
-        return DIRECTORY + '/' + title + ".jpg";
+    public static String generateFilepath(String title, String pictureFormat) {
+        if (pictureFormat.equalsIgnoreCase("jpeg") || pictureFormat == null) {
+            return DIRECTORY + '/' + title + ".jpg";
+        } else {
+            return RAW_DIRECTORY + '/' + title + ".raw";
+        }
     }
 
     public static long getAvailableSpace() {

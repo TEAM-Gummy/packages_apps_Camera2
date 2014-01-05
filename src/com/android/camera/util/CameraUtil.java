@@ -40,6 +40,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -56,6 +57,7 @@ import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
 import com.android.camera.CameraHolder;
 import com.android.camera.CameraManager;
+import com.android.camera.CameraSettings;
 import com.android.camera.util.IntentHelper;
 import com.android.camera2.R;
 
@@ -63,10 +65,14 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 /**
  * Collection of utility functions used in this package.
@@ -108,8 +114,15 @@ public class CameraUtil {
     private static final String AUTO_WHITE_BALANCE_LOCK_SUPPORTED = "auto-whitebalance-lock-supported";
     private static final String VIDEO_SNAPSHOT_SUPPORTED = "video-snapshot-supported";
     public static final String SCENE_MODE_HDR = "hdr";
+    public static final String SCENE_MODE_ASD = "asd";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
+
+    private static boolean sEnableZSL;
+
+    // Do not change the focus mode when TTF is used
+    private static boolean sNoFocusModeChangeForTouch;
+
 
     // Fields for the show-on-maps-functionality
     private static final String MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
@@ -117,6 +130,10 @@ public class CameraUtil {
 
     /** Has to be in sync with the receiving MovieActivity. */
     public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
+
+    public static boolean isZSLEnabled() {
+        return sEnableZSL;
+    }
 
     public static boolean isSupported(String value, List<String> supported) {
         return supported == null ? false : supported.indexOf(value) >= 0;
@@ -139,6 +156,11 @@ public class CameraUtil {
         return (supported != null) && supported.contains(SCENE_MODE_HDR);
     }
 
+    public static boolean isAutoSceneDetectionSupported(Parameters params) {
+        List<String> supported = params.getSupportedSceneModes();
+        return (supported != null) && supported.contains(SCENE_MODE_ASD) && (params.get("asd-mode") != null);
+    }
+
     public static boolean isMeteringAreaSupported(Parameters params) {
         return params.getMaxNumMeteringAreas() > 0;
     }
@@ -149,27 +171,28 @@ public class CameraUtil {
                         params.getSupportedFocusModes()));
     }
 
+    public static boolean isSupported(Parameters params, String key) {
+        return (params.get(key) != null && !"null".equals(params.get(key)));
+    }
+
+    public static int getNumSnapsPerShutter(Parameters params) {
+        String numJpegs = params.get("num-jpegs-per-shutter");
+        if (!TextUtils.isEmpty(numJpegs)) {
+            return Integer.valueOf(numJpegs);
+        }
+        String numSnaps = params.get("num-snaps-per-shutter");
+        if (!TextUtils.isEmpty(numSnaps)) {
+            return Integer.valueOf(numSnaps);
+        }
+        return 1;
+    }
+
     // Private intent extras. Test only.
     private static final String EXTRAS_CAMERA_FACING =
             "android.intent.extras.CAMERA_FACING";
 
     private static float sPixelDensity = 1;
     private static ImageFileNamer sImageFileNamer;
-
-    // Samsung camcorder mode
-    private static boolean sSamsungCamMode;
-
-    // HTC camcorder mode
-    private static boolean sHTCCamMode;
-
-    // For setting video size before recording starts
-    private static boolean sEarlyVideoSize;
-
-   // Workaround for QC cameras with broken face detection on front camera
-   private static boolean sNoFaceDetectOnFrontCamera;
-
-    // Samsung ZSL mode
-    private static boolean sEnableZSL;
 
     private CameraUtil() {
     }
@@ -182,37 +205,17 @@ public class CameraUtil {
         sPixelDensity = metrics.density;
         sImageFileNamer = new ImageFileNamer(
                 context.getString(R.string.image_file_name_format));
-
-        // These come from the config, but are needed before parameters are set.
-        sSamsungCamMode = context.getResources().getBoolean(R.bool.needsSamsungCamMode);
-        sHTCCamMode = context.getResources().getBoolean(R.bool.needsHTCCamMode);
-        sEarlyVideoSize = context.getResources().getBoolean(R.bool.needsEarlyVideoSize);
         sEnableZSL = context.getResources().getBoolean(R.bool.enableZSL);
-        sNoFaceDetectOnFrontCamera = context.getResources().getBoolean(R.bool.noFaceDetectOnFrontCamera);
+        sNoFocusModeChangeForTouch = context.getResources().getBoolean(
+                R.bool.useContinuosFocusForTouch);
     }
 
     public static int dpToPixel(int dp) {
         return Math.round(sPixelDensity * dp);
     }
 
-    public static boolean useHTCCamMode() {
-        return sHTCCamMode;
-    }
-
-    public static boolean useSamsungCamMode() {
-        return sSamsungCamMode;
-    }
-
-    public static boolean needsEarlyVideoSize() {
-        return sEarlyVideoSize;
-    }
-
-    public static boolean enableZSL() {
-        return sEnableZSL;
-    }
-
-    public static boolean noFaceDetectOnFrontCamera() {
-        return sNoFaceDetectOnFrontCamera;
+    public static boolean noFocusModeChangeForTouch() {
+        return sNoFocusModeChangeForTouch;
     }
 
     // Rotates the bitmap by the specified degree.
@@ -454,6 +457,12 @@ public class CameraUtil {
         return 0;
     }
 
+    public static boolean isScreenRotated(Activity activity) {
+        int rotation = activity.getWindowManager().getDefaultDisplay()
+                .getRotation();
+        return rotation != Surface.ROTATION_0 && rotation != Surface.ROTATION_180;
+    }
+
     /**
      * Calculate the default orientation of the device based on the width and
      * height of the display when rotation = 0 (i.e. natural width and height)
@@ -604,13 +613,25 @@ public class CameraUtil {
         return optimalSize;
     }
 
-    public static void dumpParameters(Parameters parameters) {
-        String flattened = parameters.flatten();
-        StringTokenizer tokenizer = new StringTokenizer(flattened, ";");
-        Log.d(TAG, "Dump all camera parameters:");
-        while (tokenizer.hasMoreElements()) {
-            Log.d(TAG, tokenizer.nextToken());
+    public static void dumpParameters(Parameters params) {
+        Set<String> sortedParams = new TreeSet<String>();
+        sortedParams.addAll(Arrays.asList(params.flatten().split(";")));
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        Iterator<String> i = sortedParams.iterator();
+        while (i.hasNext()) {
+            String nextParam = i.next();
+            if ((sb.length() + nextParam.length()) > 2044) {
+                Log.d(TAG, "Parameters: " + sb.toString());
+                sb = new StringBuilder();
+            }
+            sb.append(nextParam);
+            if (i.hasNext()) {
+                sb.append(", ");
+            }
         }
+        sb.append("]");
+        Log.d(TAG, "Parameters: " + sb.toString());
     }
 
     /**
@@ -862,7 +883,20 @@ public class CameraUtil {
             }
         }
     }
-
+   public static String getFilpModeString(int value){
+        switch(value){
+            case 0:
+                return CameraSettings.FLIP_MODE_OFF;
+            case 1:
+                return CameraSettings.FLIP_MODE_H;
+            case 2:
+                return CameraSettings.FLIP_MODE_V;
+            case 3:
+                return CameraSettings.FLIP_MODE_VH;
+            default:
+                return null;
+        }
+    }
     /**
      * For still image capture, we need to get the right fps range such that the
      * camera can slow down the framerate to allow for less-noisy/dark
