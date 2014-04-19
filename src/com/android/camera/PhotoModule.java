@@ -1163,7 +1163,9 @@ public class PhotoModule
                 // Animate capture with real jpeg data instead of a preview frame.
                 if (!mBurstShotInProgress && mCameraState != LONGSHOT
                         && (mReceivedSnapNum == mBurstSnapNum)) {
-                    mUI.animateCapture(jpegData, orientation, mMirror);
+                    mUI.animateCapture(jpegData, orientation, mMirror,
+                            (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) &&
+                            (mSceneMode != CameraUtil.SCENE_MODE_HDR));
                 }
             } else {
                 mJpegImageData = jpegData;
@@ -1362,6 +1364,12 @@ public class PhotoModule
 
         if (animateBefore) {
             animateAfterShutter();
+        }
+
+        if (mSceneMode == CameraUtil.SCENE_MODE_HDR ||
+                CameraSettings.isSuperZoomEnabled(mParameters) ||
+                CameraSettings.isSlowShutterEnabled(mParameters)) {
+            mUI.showWaitAnimation();
         }
 
         // Set rotation and gps data.
@@ -2615,6 +2623,10 @@ public class PhotoModule
             mParameters.set("snapshot-burst-num",
                     mPreferences.getString(CameraSettings.KEY_BURST_MODE, "1"));
         }
+
+        // SuperZoom
+        CameraSettings.setSuperZoom(mParameters, mPreferences.getString(CameraSettings.KEY_SUPERZOOM,
+                mActivity.getString(R.string.pref_superzoom_default)).equals("on"));
 
         // Since changing scene mode may change supported values, set scene mode
         // first. HDR is a scene mode. To promote it in UI, it is stored in a
