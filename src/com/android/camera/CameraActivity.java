@@ -677,8 +677,7 @@ public class CameraActivity extends Activity
                         | SUPPORT_SHARE | SUPPORT_SHOW_ON_MAP;
                 break;
             case LocalData.LOCAL_VIDEO:
-                supported |= SUPPORT_DELETE | SUPPORT_INFO | SUPPORT_TRIM
-                        | SUPPORT_SHARE;
+                supported |= SUPPORT_DELETE | SUPPORT_INFO | SUPPORT_SHARE;
                 break;
             case LocalData.LOCAL_PHOTO_SPHERE:
                 supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
@@ -1560,6 +1559,7 @@ public class CameraActivity extends Activity
         module.onPauseBeforeSuper();
         module.onPauseAfterSuper();
         ((ViewGroup) mCameraModuleRootView).removeAllViews();
+        ((ViewGroup) mCameraModuleRootView).clearDisappearingChildren();
     }
 
     private void performDeletion() {

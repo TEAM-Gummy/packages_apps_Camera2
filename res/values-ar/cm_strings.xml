@@ -15,19 +15,19 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20.7 ميغا بكسل</string>
-  <string name="pref_camera_picturesize_entry_18mp">18 ميجا بكسل</string>
+  <string name="pref_camera_picturesize_entry_18mp">18 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_10mp">10 ميغا بكسل</string>
-  <string name="pref_camera_picturesize_entry_9mp">9  ميغابكسل</string>
+  <string name="pref_camera_picturesize_entry_9mp">9 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2 ميغا بكسل</string>
-  <string name="pref_camera_picturesize_entry_7_7mp">7.7 ميغا بكسل (4:3)</string>
+  <string name="pref_camera_picturesize_entry_7_7mp">7.7 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_6_4mp">6.4 ميغا بكسل</string>
-  <string name="pref_camera_picturesize_entry_6mp">6 ميجا بكسل</string>
+  <string name="pref_camera_picturesize_entry_6mp">6 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4.5 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_3_7mp">3.7 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_2_5mp">2.5 ميغا بكسل</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">مصراع بطيئة</string>
   <string name="pref_camera_slow_shutter_entry_off">مغلق</string>
   <string name="pref_camera_slow_shutter_entry_auto">تلقائي</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">1/2 ثانية</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ ثانية</string>
   <string name="pref_camera_slow_shutter_entry_1s">الثانية 1</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 ثانية</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 ثوان</string>
@@ -128,5 +128,5 @@
   <string name="camera_menu_effects_label">آثار</string>
   <string name="camera_menu_asd_label">المشهد الذكية</string>
   <string name="pref_camera_power_shutter_title">مصراع قوي</string>
-  <string name="pref_superzoom_title">زوم خارق</string>
+  <string name="pref_superzoom_title">تكبير</string>
 </resources>

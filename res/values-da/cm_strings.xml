@@ -15,24 +15,24 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
-  <string name="pref_camera_picturesize_entry_20_7mp">20,7 megapixel</string>
-  <string name="pref_camera_picturesize_entry_18mp">18 megapixel</string>
-  <string name="pref_camera_picturesize_entry_12_8mp">12,8 megapixel</string>
-  <string name="pref_camera_picturesize_entry_12_7mp">12,7 megapixel</string>
-  <string name="pref_camera_picturesize_entry_11_5mp">11,5 megapixel</string>
-  <string name="pref_camera_picturesize_entry_10_4mp">10,4 megapixel</string>
-  <string name="pref_camera_picturesize_entry_10mp">10 megapixel</string>
-  <string name="pref_camera_picturesize_entry_9mp">9 megapixel</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">8,2 megapixel</string>
-  <string name="pref_camera_picturesize_entry_7_7mp">7,7 megapixel (4:3)</string>
-  <string name="pref_camera_picturesize_entry_6_4mp">6,4 megapixel</string>
-  <string name="pref_camera_picturesize_entry_6mp">6 megapixel</string>
-  <string name="pref_camera_picturesize_entry_4_5mp">4,5 megapixel</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">3,7 megapixel</string>
-  <string name="pref_camera_picturesize_entry_2_5mp">2,5 megapixel</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">2,1 megapixel</string>
-  <string name="pref_camera_picturesize_entry_1_9mp">1,9 megapixel</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="pref_camera_picturesize_entry_20_7mp">20,7 megapixels</string>
+  <string name="pref_camera_picturesize_entry_18mp">18 megapixels</string>
+  <string name="pref_camera_picturesize_entry_12_8mp">12,8 megapixels</string>
+  <string name="pref_camera_picturesize_entry_12_7mp">12,7 megapixels</string>
+  <string name="pref_camera_picturesize_entry_11_5mp">11,5 megapixels</string>
+  <string name="pref_camera_picturesize_entry_10_4mp">10,4 megapixels</string>
+  <string name="pref_camera_picturesize_entry_10mp">10 megapixels</string>
+  <string name="pref_camera_picturesize_entry_9mp">9 megapixels</string>
+  <string name="pref_camera_picturesize_entry_8_2mp">8,2 megapixels</string>
+  <string name="pref_camera_picturesize_entry_7_7mp">7,7 megapixels</string>
+  <string name="pref_camera_picturesize_entry_6_4mp">6,4 megapixels</string>
+  <string name="pref_camera_picturesize_entry_6mp">6 megapixels</string>
+  <string name="pref_camera_picturesize_entry_4_5mp">4,5 megapixels</string>
+  <string name="pref_camera_picturesize_entry_3_7mp">3,7 megapixels</string>
+  <string name="pref_camera_picturesize_entry_2_5mp">2,5 megapixels</string>
+  <string name="pref_camera_picturesize_entry_2_1mp">2,1 megapixels</string>
+  <string name="pref_camera_picturesize_entry_1_9mp">1,9 megapixels</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
@@ -60,7 +60,7 @@
   <string name="pref_camera_scenemode_entry_fallcolor">Efterårsfarve</string>
   <string name="pref_camera_scenemode_entry_fireworks">Fyrværkeri</string>
   <string name="pref_camera_scenemode_entry_flowers">Blomster</string>
-  <string name="pref_camera_scenemode_entry_handheldtwilight">Handheld twilight</string>
+  <string name="pref_camera_scenemode_entry_handheldtwilight">Håndholdt tusmørke</string>
   <string name="pref_camera_scenemode_entry_highsensitivity">Høj følsomhed</string>
   <string name="pref_camera_scenemode_entry_indoor">Indendørs</string>
   <string name="pref_camera_scenemode_entry_landscape">Landskab</string>
@@ -94,7 +94,7 @@
   <string name="pref_camera_coloreffect_entry_point_blue">Blå punkter</string>
   <string name="pref_camera_coloreffect_entry_point_green">Grønne punkter</string>
   <string name="pref_camera_coloreffect_entry_point_red_yellow">Rød-gule punkter</string>
-  <string name="pref_camera_coloreffect_entry_cartoonize">Cartoonize</string>
+  <string name="pref_camera_coloreffect_entry_cartoonize">Tegneserie</string>
   <string name="pref_camera_burst_title">Burst-tilstand</string>
   <string name="pref_camera_burst_entry_off">Fra</string>
   <string name="pref_camera_burst_entry_5">5 skud</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">Langsom udløser</string>
   <string name="pref_camera_slow_shutter_entry_off">Fra</string>
   <string name="pref_camera_slow_shutter_entry_auto">Auto</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">1/2 sekund</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ sekund</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 sekund</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 sekunder</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 sekunder</string>
@@ -128,5 +128,5 @@
   <string name="camera_menu_effects_label">EFFEKTER</string>
   <string name="camera_menu_asd_label">SMART SCENE</string>
   <string name="pref_camera_power_shutter_title">Strømudløser</string>
-  <string name="pref_superzoom_title">SuperZoom</string>
+  <string name="pref_superzoom_title">Forstør</string>
 </resources>
